@@ -53,8 +53,8 @@ MPS also aims to support future development around _Post Quantum Cryptography_: 
 interface_ to the handshake layer, whereby handshake messages can be processed gradually as they arrive, without prior reassembly in
 RAM. This allows some memory hungry Post-Quantum schemes to be implemented with small amounts of RAM.
 
-Links: [MPS API](https://github.com/hannesschofenig/mbedtls/tree/tls13-prototype/include/mbedtls/mps), [MPS
-Implementation](https://github.com/hannesschofenig/mbedtls/tree/tls13-prototype/library/mps).
+Links: [MPS API](https://github.com/hannestschofenig/mbedtls/tree/tls13-prototype/include/mbedtls/mps), [MPS
+Implementation](https://github.com/hannestschofenig/mbedtls/tree/tls13-prototype/library/mps).
 
 MPS is controlled by the configuration option `MBEDTLS_SSL_USE_MPS`, which is enabled by default.
 
