@@ -31,7 +31,11 @@ The experimental branch contains a prototype implementation of TLS 1.3. Supporte
 key exchanges, 0-RTT and session tickets. The TLS 1.3 prototype is actively being worked on, see
 [issues](https://github.com/hannestschofenig/mbedtls/issues) and [pull
 requests](https://github.com/hannestschofenig/mbedtls/pulls), and major parts of it, such as the entire TLS 1.3 key
-schedule, have already been upstreamed to the `development` branch of Mbed TLS.
+schedule, have already been upstreamed to the `development` branch of Mbed TLS. We aim to have completed the upstreaming
+of client-only, ECDHE-only TLS 1.3 support to upstream Mbed TLS by the end of September 2021.
+
+TLS 1.3 support is enabled by default. Please try it out and let us know if you have any issues. As mentioned, it will
+accelerate the upstreaming process.
 
 ## Towards DTLS 1.3, QUIC, cTLS, and Post-Quantum Cryptography: A new Message Processing Stack (MPS)
 
@@ -48,6 +52,9 @@ while variants like KemTLS can keep the MPS implementation but build a different
 MPS also aims to support future development around _Post Quantum Cryptography_: Specifically, it offers a _streaming
 interface_ to the handshake layer, whereby handshake messages can be processed gradually as they arrive, without prior reassembly in
 RAM. This allows some memory hungry Post-Quantum schemes to be implemented with small amounts of RAM.
+
+Links: [MPS API](https://github.com/hannesschofenig/mbedtls/tree/tls13-prototype/include/mbedtls/mps), [MPS
+Implementation](https://github.com/hannesschofenig/mbedtls/tree/tls13-prototype/library/mps).
 
 MPS is controlled by the configuration option `MBEDTLS_SSL_USE_MPS`, which is enabled by default.
 
