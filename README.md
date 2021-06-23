@@ -27,6 +27,12 @@ In the following, we describe the features that are currently under development.
 
 ## TLS 1.3
 
+The experimental branch contains a prototype implementation of TLS 1.3. Supported features include PSK and ECDHE-based
+key exchanges, 0-RTT and session tickets. The TLS 1.3 prototype is actively being worked on, see
+[issues](https://github.com/hannestschofenig/mbedtls/issues) and [pull
+requests](https://github.com/hannestschofenig/mbedtls/pulls), and major parts of it, such as the entire TLS 1.3 key
+schedule, have already been upstreamed to the `development` branch of Mbed TLS.
+
 ## Towards DTLS 1.3, QUIC, cTLS, and Post-Quantum Cryptography: A new Message Processing Stack (MPS)
 
 A growing number of TLS-variants are currently in development, such as DTLS 1.3, QUIC, cTLS, or KemTLS. Some of those
