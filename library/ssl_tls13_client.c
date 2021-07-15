@@ -2729,7 +2729,7 @@ static int ssl_encrypted_extensions_parse( mbedtls_ssl_context* ssl,
     const unsigned char *ext;
 
     /* ssl structure is not used when ALPN, 0RTT, and MFL extensions are not used. */
-    ((void*) ssl);
+    ((void) ssl);
     
     if( buflen < 2 )
     {
