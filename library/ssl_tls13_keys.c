@@ -872,7 +872,6 @@ int mbedtls_ssl_tls1_3_generate_resumption_master_secret(
 
     mbedtls_md_type_t md_type;
     mbedtls_md_info_t const *md_info;
-    size_t md_size;
 
     unsigned char transcript[MBEDTLS_MD_MAX_SIZE];
     size_t transcript_len;
@@ -882,7 +881,6 @@ int mbedtls_ssl_tls1_3_generate_resumption_master_secret(
 
     md_type = ssl->handshake->ciphersuite_info->mac;
     md_info = mbedtls_md_info_from_type( md_type );
-    md_size = mbedtls_md_get_size( md_info );
 
     ret = mbedtls_ssl_get_handshake_transcript( ssl, md_type,
                                                 transcript, sizeof( transcript ),
@@ -899,7 +897,7 @@ int mbedtls_ssl_tls1_3_generate_resumption_master_secret(
 
     MBEDTLS_SSL_DEBUG_BUF( 4, "Resumption master secret",
              ssl->session_negotiate->app_secrets.resumption_master_secret,
-             md_size );
+             mbedtls_md_get_size( md_info ) );
 
     MBEDTLS_SSL_DEBUG_MSG( 2,
           ( "<= mbedtls_ssl_tls1_3_generate_resumption_master_secret" ) );
