@@ -1151,6 +1151,10 @@ int mbedtls_ssl_tls1_3_create_psk_binder( mbedtls_ssl_context *ssl,
     mbedtls_md_info_t const *md_info = mbedtls_md_info_from_type( md_type );
     size_t const md_size = mbedtls_md_get_size( md_info );
 
+#if !defined(MBEDTLS_DEBUG_C)
+    ((void)) ssl);
+#endif
+    
     ret = mbedtls_ssl_tls1_3_evolve_secret( md_type,
                                             NULL,          /* Old secret */
                                             psk, psk_len,  /* Input      */
