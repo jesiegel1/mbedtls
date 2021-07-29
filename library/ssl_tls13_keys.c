@@ -887,7 +887,7 @@ int mbedtls_ssl_tls1_3_generate_resumption_master_secret(
 #if defined(MBEDTLS_DEBUG_C)
     md_info = mbedtls_md_info_from_type( md_type );
     md_size = mbedtls_md_get_size( md_info );
-#endif
+#endif /* MBEDTLS_DEBUG_C */
     
     ret = mbedtls_ssl_get_handshake_transcript( ssl, md_type,
                                                 transcript, sizeof( transcript ),
