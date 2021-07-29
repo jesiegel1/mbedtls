@@ -875,7 +875,7 @@ int mbedtls_ssl_tls1_3_generate_resumption_master_secret(
 #if defined(MBEDTLS_DEBUG_C)  
     mbedtls_md_info_t const *md_info;
     size_t md_size;
-#endif
+#endif /* MBEDTLS_DEBUG_C */
     
     unsigned char transcript[MBEDTLS_MD_MAX_SIZE];
     size_t transcript_len;
