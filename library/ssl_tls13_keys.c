@@ -1160,7 +1160,7 @@ int mbedtls_ssl_tls1_3_create_psk_binder( mbedtls_ssl_context *ssl,
 
 #if !defined(MBEDTLS_DEBUG_C)
     ((void) ssl);
-#endif
+#endif /* MBEDTLS_DEBUG_C */
     
     ret = mbedtls_ssl_tls1_3_evolve_secret( md_type,
                                             NULL,          /* Old secret */
