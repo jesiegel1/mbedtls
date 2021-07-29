@@ -2723,8 +2723,9 @@ static int ssl_encrypted_extensions_parse( mbedtls_ssl_context* ssl,
     size_t ext_len;
     const unsigned char *ext;
 
-    /* ssl structure is not used when ALPN, 0RTT, and MFL extensions are not used. */
+#if !( defined(MBEDTLS_SSL_ALPN) || defined(MBEDTLS_ZERO_RTT) || defined(MBEDTLS_SSL_MAX_FRAGMENT_LENGTH) )
     ((void) ssl);
+#endif /* ! (MBEDTLS_SSL_ALPN || MBEDTLS_ZERO_RTT || MBEDTLS_SSL_MAX_FRAGMENT_LENGTH) */
     
     if( buflen < 2 )
     {
