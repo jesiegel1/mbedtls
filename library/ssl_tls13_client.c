@@ -124,11 +124,12 @@ static int ssl_write_early_data_postprocess( mbedtls_ssl_context* ssl );
 int ssl_write_early_data_process( mbedtls_ssl_context* ssl )
 {
     int ret;
-#if defined(MBEDTLS_SSL_USE_MPS)
+#if defined(MBEDTLS_SSL_USE_MPS) & defined(MBEDTLS_ZERO_RTT)
     mbedtls_writer *msg;
     unsigned char *buf;
     mbedtls_mps_size_t buf_len, msg_len;
-#endif /* MBEDTLS_SSL_USE_MPS */
+#endif /* MBEDTLS_SSL_USE_MPS & MBEDTLS_ZERO_RTT */
+    
     MBEDTLS_SSL_DEBUG_MSG( 2, ( "=> write early data" ) );
 
     MBEDTLS_SSL_PROC_CHK_NEG( ssl_write_early_data_coordinate( ssl ) );
@@ -176,13 +177,7 @@ int ssl_write_early_data_process( mbedtls_ssl_context* ssl )
 #endif /* MBEDTLS_SSL_USE_MPS */
 
 #else /* MBEDTLS_ZERO_RTT */
-#if defined(MBEDTLS_SSL_USE_MPS)
-        ((void) buf);
-        ((void) buf_len);
-        ((void) msg);
-        ((void) msg_len);
-#endif /* MBEDTLS_SSL_USE_MPS */
-        
+      
         /* Should never happen */
         return( MBEDTLS_ERR_SSL_INTERNAL_ERROR );
 
