@@ -1159,6 +1159,7 @@ int mbedtls_ssl_tls1_3_create_psk_binder( mbedtls_ssl_context *ssl,
     size_t const md_size = mbedtls_md_get_size( md_info );
 
 #if !defined(MBEDTLS_DEBUG_C)
+    ssl = NULL;
     ((void) ssl);
 #endif /* MBEDTLS_DEBUG_C */
     
