@@ -535,7 +535,14 @@
 #define MBEDTLS_TLS_EXT_SIG_ALG_CERT                50 /* RFC 8446 TLS 1.3 */
 #define MBEDTLS_TLS_EXT_KEY_SHARE                   51 /* RFC 8446 TLS 1.3 */
 
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
 #define MBEDTLS_TLS_EXT_CID                         54 /* RFC 9146 DTLS 1.2 CID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
+/* The value of the CID extension as used by the CID legacy version. */
+#define MBEDTLS_TLS_EXT_CID                        254 /* Legacy CID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #define MBEDTLS_TLS_EXT_ECJPAKE_KKPP               256 /* experimental */
 
@@ -1242,9 +1249,9 @@ struct mbedtls_ssl_config
     void *MBEDTLS_PRIVATE(p_ticket);                 /*!< context for the ticket callbacks   */
 #endif /* MBEDTLS_SSL_SESSION_TICKETS && MBEDTLS_SSL_SRV_C */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     size_t MBEDTLS_PRIVATE(cid_len); /*!< The length of CIDs for incoming DTLS records.      */
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_X509_CRT_PARSE_C)
     const mbedtls_x509_crt_profile *MBEDTLS_PRIVATE(cert_profile); /*!< verification profile */
@@ -1393,11 +1400,11 @@ struct mbedtls_ssl_config
                                           the client's preferences rather
                                           than ours                         */
 #endif
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     unsigned int MBEDTLS_PRIVATE(ignore_unexpected_cid) : 1; /*!< Determines whether DTLS
                                              *   record with unexpected CID
                                              *   should lead to failure.    */
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 #if defined(MBEDTLS_SSL_DTLS_SRTP)
     unsigned int MBEDTLS_PRIVATE(dtls_srtp_mki_support) : 1; /* support having mki_value
                                                in the use_srtp extension     */
@@ -1489,10 +1496,10 @@ struct mbedtls_ssl_context
                                      TLS: maintained by us
                                      DTLS: read from peer             */
     unsigned char *MBEDTLS_PRIVATE(in_hdr);      /*!< start of record header           */
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     unsigned char *MBEDTLS_PRIVATE(in_cid);      /*!< The start of the CID;
                                  *   (the end is marked by in_len).   */
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
     unsigned char *MBEDTLS_PRIVATE(in_len);      /*!< two-bytes message length field   */
     unsigned char *MBEDTLS_PRIVATE(in_iv);       /*!< ivlen-byte IV                    */
     unsigned char *MBEDTLS_PRIVATE(in_msg);      /*!< message contents (in_iv+ivlen)   */
@@ -1545,10 +1552,10 @@ struct mbedtls_ssl_context
     unsigned char *MBEDTLS_PRIVATE(out_buf);     /*!< output buffer                    */
     unsigned char *MBEDTLS_PRIVATE(out_ctr);     /*!< 64-bit outgoing message counter  */
     unsigned char *MBEDTLS_PRIVATE(out_hdr);     /*!< start of record header           */
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     unsigned char *MBEDTLS_PRIVATE(out_cid);     /*!< The start of the CID;
                                  *   (the end is marked by in_len).   */
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
     unsigned char *MBEDTLS_PRIVATE(out_len);     /*!< two-bytes message length field   */
     unsigned char *MBEDTLS_PRIVATE(out_iv);      /*!< ivlen-byte IV                    */
     unsigned char *MBEDTLS_PRIVATE(out_msg);     /*!< message contents (out_iv+ivlen)  */
@@ -1610,7 +1617,7 @@ struct mbedtls_ssl_context
     char MBEDTLS_PRIVATE(peer_verify_data)[MBEDTLS_SSL_VERIFY_DATA_MAX_LEN]; /*!<  previous handshake verify data */
 #endif /* MBEDTLS_SSL_RENEGOTIATION */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)|| defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     /* CID configuration to use in subsequent handshakes. */
 
     /*! The next incoming CID, chosen by the user and applying to
@@ -1623,7 +1630,7 @@ struct mbedtls_ssl_context
                             *   be negotiated in the next handshake or not.
                             *   Possible values are #MBEDTLS_SSL_CID_ENABLED
                             *   and #MBEDTLS_SSL_CID_DISABLED. */
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_SSL_EXPORT_KEYS)
     /** Callback to export key block and master secret                      */
@@ -1835,9 +1842,7 @@ void mbedtls_ssl_set_bio( mbedtls_ssl_context *ssl,
 
 #if defined(MBEDTLS_SSL_PROTO_DTLS)
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
-
-
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
 /**
  * \brief             Configure the use of the Connection ID (CID)
  *                    extension in the next handshake.
@@ -1967,7 +1972,7 @@ int mbedtls_ssl_get_peer_cid( mbedtls_ssl_context *ssl,
                      unsigned char peer_cid[ MBEDTLS_SSL_CID_OUT_LEN_MAX ],
                      size_t *peer_cid_len );
 
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 /**
  * \brief          Set the Maximum Tranport Unit (MTU).
@@ -2759,7 +2764,7 @@ void mbedtls_ssl_conf_tls13_key_exchange_modes( mbedtls_ssl_config* conf,
                                                 const int kex_modes );
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3_EXPERIMENTAL */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
 #define MBEDTLS_SSL_UNEXPECTED_CID_IGNORE 0
 #define MBEDTLS_SSL_UNEXPECTED_CID_FAIL   1
 /**
@@ -2796,7 +2801,7 @@ void mbedtls_ssl_conf_tls13_key_exchange_modes( mbedtls_ssl_config* conf,
  */
 int mbedtls_ssl_conf_cid( mbedtls_ssl_config *conf, size_t len,
                           int ignore_other_cids );
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_X509_CRT_PARSE_C)
 /**

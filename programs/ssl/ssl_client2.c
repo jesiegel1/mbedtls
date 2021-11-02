@@ -154,7 +154,7 @@ int main( void )
 #define USAGE_KEY_OPAQUE ""
 #endif
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
 #define USAGE_CID \
     "    cid=%%d             Disable (0) or enable (1) the use of the DTLS Connection ID extension.\n" \
     "                       default: 0 (disabled)\n"     \
@@ -164,9 +164,9 @@ int main( void )
     "                        default: \"\"\n" \
     "    cid_val_renego=%%s   The CID to use for incoming messages (in hex, without 0x) after renegotiation.\n"  \
     "                        default: same as 'cid_val' parameter\n"
-#else /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#else /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 #define USAGE_CID ""
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED)
 #define USAGE_PSK_RAW                                               \
@@ -570,7 +570,7 @@ static int my_verify( void *data, mbedtls_x509_crt *crt,
 }
 #endif /* MBEDTLS_X509_CRT_PARSE_C */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
 int report_cid_usage( mbedtls_ssl_context *ssl,
                       const char *additional_description )
 {
@@ -647,7 +647,7 @@ int report_cid_usage( mbedtls_ssl_context *ssl,
 
     return( 0 );
 }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 int main( int argc, char *argv[] )
 {
@@ -669,7 +669,7 @@ int main( int argc, char *argv[] )
     size_t psk_len = 0;
 #endif
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     unsigned char cid[MBEDTLS_SSL_CID_IN_LEN_MAX];
     unsigned char cid_renego[MBEDTLS_SSL_CID_IN_LEN_MAX];
     size_t cid_len = 0;
@@ -966,7 +966,7 @@ int main( int argc, char *argv[] )
         else if( strcmp( p, "key_opaque" ) == 0 )
             opt.key_opaque = atoi( q );
 #endif
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
         else if( strcmp( p, "cid" ) == 0 )
         {
             opt.cid_enabled = atoi( q );
@@ -987,7 +987,7 @@ int main( int argc, char *argv[] )
         {
             opt.cid_val_renego = q;
         }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
         else if( strcmp( p, "psk" ) == 0 )
             opt.psk = q;
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
@@ -1430,7 +1430,7 @@ int main( int argc, char *argv[] )
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
     }
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     if( mbedtls_test_unhexify( cid, sizeof( cid ),
                                opt.cid_val, &cid_len ) != 0 )
     {
@@ -1451,7 +1451,7 @@ int main( int argc, char *argv[] )
         mbedtls_printf( "CID not valid\n" );
         goto exit;
     }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_ECP_C)
     if( opt.curves != NULL )
@@ -1736,7 +1736,7 @@ int main( int argc, char *argv[] )
     memset( peer_crt_info, 0, sizeof( peer_crt_info ) );
 #endif /* MBEDTLS_X509_CRT_PARSE_C */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     if( opt.cid_enabled == 1 || opt.cid_enabled_renego == 1 )
     {
         if( opt.cid_enabled == 1        &&
@@ -1761,7 +1761,7 @@ int main( int argc, char *argv[] )
             goto exit;
         }
     }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
     if( opt.auth_mode != DFL_AUTH_MODE )
         mbedtls_ssl_conf_authmode( &conf, opt.auth_mode );
@@ -2016,7 +2016,7 @@ int main( int argc, char *argv[] )
     mbedtls_ssl_set_bio( &ssl, &io_ctx, send_cb, recv_cb,
                          opt.nbio == 0 ? recv_timeout_cb : NULL );
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     if( opt.transport == MBEDTLS_SSL_TRANSPORT_DATAGRAM )
     {
         if( ( ret = mbedtls_ssl_set_cid( &ssl, opt.cid_enabled,
@@ -2027,7 +2027,7 @@ int main( int argc, char *argv[] )
             goto exit;
         }
     }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_SSL_PROTO_DTLS)
     if( opt.dtls_mtu != DFL_DTLS_MTU )
@@ -2383,7 +2383,7 @@ int main( int argc, char *argv[] )
 #endif /* !MBEDTLS_X509_REMOVE_INFO */
 #endif /* MBEDTLS_X509_CRT_PARSE_C */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     ret = report_cid_usage( &ssl, "initial handshake" );
     if( ret != 0 )
         goto exit;
@@ -2399,7 +2399,7 @@ int main( int argc, char *argv[] )
             goto exit;
         }
     }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_SSL_RENEGOTIATION)
     if( opt.renegotiate )
@@ -2441,11 +2441,11 @@ int main( int argc, char *argv[] )
     }
 #endif /* MBEDTLS_SSL_RENEGOTIATION */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     ret = report_cid_usage( &ssl, "after renegotiation" );
     if( ret != 0 )
         goto exit;
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
     /*
      * 6. Write the GET request

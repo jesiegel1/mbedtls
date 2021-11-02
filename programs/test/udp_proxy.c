@@ -295,12 +295,12 @@ static void get_options( int argc, char *argv[] )
             if( opt.bad_ad < 0 || opt.bad_ad > 1 )
                 exit_usage( p, q );
         }
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
         else if( strcmp( p, "bad_cid" ) == 0 )
         {
             opt.bad_cid = (unsigned) atoi( q );
         }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
         else if( strcmp( p, "protect_hvr" ) == 0 )
         {
             opt.protect_hvr = atoi( q );

@@ -53,7 +53,7 @@
 
 #if defined(MBEDTLS_SSL_PROTO_DTLS)
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
 /* Top-level Connection ID API */
 
 int mbedtls_ssl_conf_cid( mbedtls_ssl_config *conf,
@@ -144,7 +144,7 @@ int mbedtls_ssl_get_peer_cid( mbedtls_ssl_context *ssl,
 
     return( 0 );
 }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #endif /* MBEDTLS_SSL_PROTO_DTLS */
 
@@ -749,7 +749,7 @@ static int ssl_tls12_populate_transform( mbedtls_ssl_transform *transform,
         return( MBEDTLS_ERR_SSL_BAD_INPUT_DATA );
     }
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     /* Copy own and peer's CID if the use of the CID
      * extension has been negotiated. */
     if( ssl->handshake->cid_in_use == MBEDTLS_SSL_CID_ENABLED )
@@ -767,7 +767,7 @@ static int ssl_tls12_populate_transform( mbedtls_ssl_transform *transform,
         MBEDTLS_SSL_DEBUG_BUF( 3, "Outgoing CID", transform->out_cid,
                                transform->out_cid_len );
     }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
     /*
      * Compute key block using the PRF
@@ -5546,11 +5546,11 @@ void mbedtls_ssl_session_free( mbedtls_ssl_session *session )
 
 #if defined(MBEDTLS_SSL_CONTEXT_SERIALIZATION)
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
 #define SSL_SERIALIZED_CONTEXT_CONFIG_DTLS_CONNECTION_ID 1u
 #else
 #define SSL_SERIALIZED_CONTEXT_CONFIG_DTLS_CONNECTION_ID 0u
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #define SSL_SERIALIZED_CONTEXT_CONFIG_DTLS_BADMAC_LIMIT 1u
 
@@ -5750,7 +5750,7 @@ int mbedtls_ssl_context_save( mbedtls_ssl_context *ssl,
         p += sizeof( ssl->transform->randbytes );
     }
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     used += 2 + ssl->transform->in_cid_len + ssl->transform->out_cid_len;
     if( used <= buf_len )
     {
@@ -5762,7 +5762,7 @@ int mbedtls_ssl_context_save( mbedtls_ssl_context *ssl,
         memcpy( p, ssl->transform->out_cid, ssl->transform->out_cid_len );
         p += ssl->transform->out_cid_len;
     }
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
     /*
      * Saved fields from top-level ssl_context structure
@@ -5988,7 +5988,7 @@ static int ssl_context_load( mbedtls_ssl_context *ssl,
 
     p += sizeof( ssl->transform->randbytes );
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     /* Read connection IDs and store them */
     if( (size_t)( end - p ) < 1 )
         return( MBEDTLS_ERR_SSL_BAD_INPUT_DATA );
@@ -6008,7 +6008,7 @@ static int ssl_context_load( mbedtls_ssl_context *ssl,
 
     memcpy( ssl->transform->out_cid, p, ssl->transform->out_cid_len );
     p += ssl->transform->out_cid_len;
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
     /*
      * Saved fields from top-level ssl_context structure

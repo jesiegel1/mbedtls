@@ -225,7 +225,7 @@
 #define MBEDTLS_SSL_PADDING_ADD              0
 #endif
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
 #define MBEDTLS_SSL_MAX_CID_EXPANSION      MBEDTLS_SSL_CID_TLS1_3_PADDING_GRANULARITY
 #else
 #define MBEDTLS_SSL_MAX_CID_EXPANSION        0
@@ -289,7 +289,7 @@
    implicit sequence number. */
 #define MBEDTLS_SSL_HEADER_LEN 13
 
-#if !defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if !(defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY))
 #define MBEDTLS_SSL_IN_BUFFER_LEN  \
     ( ( MBEDTLS_SSL_HEADER_LEN ) + ( MBEDTLS_SSL_IN_PAYLOAD_LEN ) )
 #else
@@ -298,7 +298,7 @@
       + ( MBEDTLS_SSL_CID_IN_LEN_MAX ) )
 #endif
 
-#if !defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if !(defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY))
 #define MBEDTLS_SSL_OUT_BUFFER_LEN  \
     ( ( MBEDTLS_SSL_HEADER_LEN ) + ( MBEDTLS_SSL_OUT_PAYLOAD_LEN ) )
 #else
@@ -347,7 +347,7 @@ size_t mbedtls_ssl_get_input_max_frag_len( const mbedtls_ssl_context *ssl );
 #if defined(MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH)
 static inline size_t mbedtls_ssl_get_output_buflen( const mbedtls_ssl_context *ctx )
 {
-#if defined (MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined (MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     return mbedtls_ssl_get_output_max_frag_len( ctx )
                + MBEDTLS_SSL_HEADER_LEN + MBEDTLS_SSL_PAYLOAD_OVERHEAD
                + MBEDTLS_SSL_CID_OUT_LEN_MAX;
@@ -359,7 +359,7 @@ static inline size_t mbedtls_ssl_get_output_buflen( const mbedtls_ssl_context *c
 
 static inline size_t mbedtls_ssl_get_input_buflen( const mbedtls_ssl_context *ctx )
 {
-#if defined (MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined (MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     return mbedtls_ssl_get_input_max_frag_len( ctx )
                + MBEDTLS_SSL_HEADER_LEN + MBEDTLS_SSL_PAYLOAD_OVERHEAD
                + MBEDTLS_SSL_CID_IN_LEN_MAX;
@@ -580,7 +580,7 @@ struct mbedtls_ssl_handshake_params
     unsigned char alt_out_ctr[MBEDTLS_SSL_SEQUENCE_NUMBER_LEN]; /*!<  Alternative record epoch/counter
                                                                       for resending messages         */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     /* The state of CID configuration in this handshake. */
 
     uint8_t cid_in_use; /*!< This indicates whether the use of the CID extension
@@ -590,7 +590,7 @@ struct mbedtls_ssl_handshake_params
     unsigned char peer_cid[ MBEDTLS_SSL_CID_OUT_LEN_MAX ]; /*! The peer's CID */
     uint8_t peer_cid_len;                                  /*!< The length of
                                                             *   \c peer_cid.  */
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
     struct
     {
@@ -819,12 +819,12 @@ struct mbedtls_ssl_transform
     mbedtls_cipher_context_t cipher_ctx_dec;    /*!<  decryption context      */
     int minor_ver;
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     uint8_t in_cid_len;
     uint8_t out_cid_len;
     unsigned char in_cid [ MBEDTLS_SSL_CID_OUT_LEN_MAX ];
     unsigned char out_cid[ MBEDTLS_SSL_CID_OUT_LEN_MAX ];
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 
 #if defined(MBEDTLS_SSL_CONTEXT_SERIALIZATION)
     /* We need the Hello random bytes in order to re-derive keys from the
@@ -897,10 +897,10 @@ typedef struct
     size_t data_offset;     /* Offset of record content                      */
     size_t data_len;        /* Length of record content                      */
 
-#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
+#if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID) || defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY)
     uint8_t cid_len;        /* Length of the CID (0 if not present)          */
     unsigned char cid[ MBEDTLS_SSL_CID_LEN_MAX ]; /* The CID                 */
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID || MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY */
 } mbedtls_record;
 
 #if defined(MBEDTLS_X509_CRT_PARSE_C)

@@ -1295,10 +1295,6 @@
  * `mbedtls_ssl_get_peer_cid()` and `mbedtls_ssl_conf_cid()`.
  * See the corresponding documentation for more information.
  *
- * \warning The Connection ID extension is still in draft state.
- *          We make no stability promises for the availability
- *          or the shape of the API controlled by this option.
- *
  * The maximum lengths of outgoing and incoming CIDs can be configured
  * through the options
  * - MBEDTLS_SSL_CID_OUT_LEN_MAX
@@ -1309,6 +1305,28 @@
  * Uncomment to enable the Connection ID extension.
  */
 //#define MBEDTLS_SSL_DTLS_CONNECTION_ID
+
+/**
+ * \def MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY
+ *
+ * Enable support for the DTLS Connection ID extension utilizing 
+ * the version published in draft-ietf-tls-dtls-connection-id-05,
+ * https://tools.ietf.org/html/draft-ietf-tls-dtls-connection-id-05
+ *
+ * Support for this functionality is included for backwards-
+ * compatibility reasons. Note: The legacy version and the version
+ * published in RFC 9146 cannot be enabled at the same time.
+ * 
+ * The maximum lengths of outgoing and incoming CIDs can be configured
+ * through the options
+ * - MBEDTLS_SSL_CID_OUT_LEN_MAX
+ * - MBEDTLS_SSL_CID_IN_LEN_MAX.
+ *
+ * Requires: MBEDTLS_SSL_PROTO_DTLS
+ *
+ * Uncomment to enable the Connection ID extension.
+ */
+//#define MBEDTLS_SSL_DTLS_CONNECTION_ID_LEGACY
 
 /**
  * \def MBEDTLS_SSL_ASYNC_PRIVATE
