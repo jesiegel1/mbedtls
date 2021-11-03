@@ -388,8 +388,8 @@ static int ssl_parse_inner_plaintext( unsigned char const *content,
  *
  * 2) CID functionality based on RFC 9146 enabled
  *
- * size = 8 + 1 +1 +1 + 2 + 2 + 6 + n + 2
- *      = 13 + 1 + 8 + 1 = 23 bytes
+ * size = 8 + 1 + 1 + 1 + 2 + 2 + 6 + 2 + CID-length
+ *      = 23 + CID-length
  *
  * 3) CID functionality based on legacy CID version
     according to draft-ietf-tls-dtls-connection-id-05
