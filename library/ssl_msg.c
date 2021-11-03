@@ -555,11 +555,10 @@ static void ssl_extract_add_data_from_record( unsigned char* add_data,
             *cur = rec->cid_len;
             cur++;
         }
-#else
+#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
         // epoch + sequence number
         memcpy( cur, rec->ctr, sizeof( rec->ctr ) );
         cur += sizeof( rec->ctr );
-#endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
     }
 
     // type
