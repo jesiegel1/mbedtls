@@ -2128,8 +2128,7 @@ int mbedtls_ssl_tls13_write_early_data_ext( mbedtls_ssl_context *ssl,
         if( ( ssl->handshake->extensions_present & MBEDTLS_SSL_EXT_EARLY_DATA ) == 0 )
             return( 0 );
 
-        if( ssl->conf->tls13_kex_modes !=
-                   MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK ||
+        if( !mbedtls_ssl_conf_tls13_some_psk_enabled( ssl ) ||
             ssl->conf->early_data_enabled == MBEDTLS_SSL_EARLY_DATA_DISABLED )
         {
             MBEDTLS_SSL_DEBUG_MSG( 2, ( "<= skip write early_data extension" ) );

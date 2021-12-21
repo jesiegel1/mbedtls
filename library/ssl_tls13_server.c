@@ -1922,7 +1922,7 @@ static int ssl_tls13_early_data_fetch( mbedtls_ssl_context *ssl,
     }
 
     *buf    = ssl->in_msg;
-    *buflen = ssl->in_hslen;
+    *buflen = ssl->in_msglen;
 
 cleanup:
 
