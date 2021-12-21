@@ -2099,7 +2099,7 @@ int main( int argc, char *argv[] )
         mbedtls_ssl_conf_max_tls_version( &conf, opt.max_version );
 
 #if defined(MBEDTLS_SSL_PROTO_TLS1_3) && defined(MBEDTLS_ZERO_RTT)
-    mbedtls_ssl_conf_early_data( &conf, opt.early_data, 0, NULL );
+    mbedtls_ssl_conf_early_data( &conf, opt.early_data, 0, MBEDTLS_SSL_EARLY_DATA_OLD_API, NULL );
     mbedtls_ssl_set_early_data( &ssl, (const unsigned char*) early_data,
                                 strlen( early_data ) );
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3 && MBEDTLS_ZERO_RTT */

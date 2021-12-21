@@ -5942,6 +5942,15 @@ cleanup:
     return( ret );
 }
 
+int mbedtls_ssl_write_early_data( mbedtls_ssl_context *ssl, const unsigned char *buf, size_t len )
+{
+    ( ( void ) buf );
+    ( ( void ) len );
+
+    MBEDTLS_SSL_DEBUG_MSG( 1, ( "new 0-RTT api is not compatible with MPS" ) );
+    return( MBEDTLS_ERR_SSL_FEATURE_UNAVAILABLE );
+}
+
 /*
  * Notify the peer that the connection is being closed
  */
@@ -6273,8 +6282,9 @@ int mbedtls_ssl_write( mbedtls_ssl_context *ssl, const unsigned char *buf, size_
 
 #if defined(MBEDTLS_ZERO_RTT)
     /* TODO: What's the purpose of this check? */
-    if( ( ssl->handshake != NULL ) &&
-        ( ssl->handshake->early_data == MBEDTLS_SSL_EARLY_DATA_OFF ) )
+    if( ( ssl->conf->early_data_api == MBEDTLS_SSL_EARLY_DATA_NEW_API ) ||
+        ( ( ssl->handshake != NULL ) &&
+        ( ssl->handshake->early_data == MBEDTLS_SSL_EARLY_DATA_OFF ) ) )
 #endif /* MBEDTLS_ZERO_RTT */
     {
         if( mbedtls_ssl_is_handshake_over( ssl ) == 0 )
@@ -6293,6 +6303,63 @@ int mbedtls_ssl_write( mbedtls_ssl_context *ssl, const unsigned char *buf, size_
 
     return( ret );
 }
+
+#if defined(MBEDTLS_ZERO_RTT)
+/*
+ * Write application data as early data (public-facing wrapper)
+ */
+int mbedtls_ssl_write_early_data( mbedtls_ssl_context *ssl, const unsigned char *buf, size_t len )
+{
+    if( ssl->conf->early_data_api == MBEDTLS_SSL_EARLY_DATA_OLD_API )
+    {
+        MBEDTLS_SSL_DEBUG_MSG( 1, ( "new api must be enabled for mbedtls_ssl_write_early_data" ) );
+        return( MBEDTLS_ERR_SSL_FEATURE_UNAVAILABLE );
+    }
+
+    int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+
+    MBEDTLS_SSL_DEBUG_MSG( 2, ( "=> write early_data" ) );
+
+    if( ssl == NULL || ssl->conf == NULL )
+        return( MBEDTLS_ERR_SSL_BAD_INPUT_DATA );
+
+    /* Advance handshake if necessary */
+    if( ssl->handshake->early_data_ready == 0 )
+    {
+        /* Indicate handshake initiated from an early data write */
+        ssl->handshake->early_data_write = 1;
+        ret = mbedtls_ssl_handshake( ssl );
+
+        if( ( ssl->handshake->early_data_ready == 0 ) ||
+            ( ret != 0 && ret != MBEDTLS_ERR_SSL_WANT_WRITE ) )
+        {
+            MBEDTLS_SSL_DEBUG_RET( 1, "mbedtls_ssl_handshake", ret );
+            return( ret );
+        }
+    }
+
+    if( ( mbedtls_ssl_is_init_finished( ssl ) ) ||
+        ( ssl->handshake->early_data != MBEDTLS_SSL_EARLY_DATA_STATE_ON ) )
+    {
+        MBEDTLS_SSL_DEBUG_MSG( 2, ( "cannot send early_data" ) );
+        return( MBEDTLS_ERR_SSL_INTERNAL_ERROR );
+    }
+
+#if defined(MBEDTLS_SSL_RENEGOTIATION)
+    if( ( ret = ssl_check_ctr_renegotiate( ssl ) ) != 0 )
+    {
+        MBEDTLS_SSL_DEBUG_RET( 1, "ssl_check_ctr_renegotiate", ret );
+        return( ret );
+    }
+#endif
+
+    ret = ssl_write_real( ssl, buf, len );
+
+    MBEDTLS_SSL_DEBUG_MSG( 2, ( "<= write early_data" ) );
+
+    return( ret );
+}
+#endif /* MBEDTLS_ZERO_RTT*/
 
 /*
  * Notify the peer that the connection is being closed
